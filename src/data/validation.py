@@ -1,14 +1,10 @@
 """
-Data Validation Module using Great Expectations
+Data Validation Module
 """
 
 from typing import Dict, List
 
 import pandas as pd
-from great_expectations.core import ExpectationConfiguration, ExpectationSuite
-from great_expectations.core.batch import RuntimeBatchRequest
-from great_expectations.data_context import EphemeralDataContext
-from great_expectations.dataset import PandasDataset
 
 from src.utils.logger import get_logger
 
@@ -167,94 +163,3 @@ class DataValidator:
             logger.warning(f"⚠ {len(validation_results['warnings'])} warnings during validation")
 
         return validation_results
-
-    def validate_with_great_expectations(self, df: pd.DataFrame) -> bool:
-        """
-        Comprehensive validation using Great Expectations
-
-        Args:
-            df: DataFrame to validate
-
-        Returns:
-            True if all expectations pass, False otherwise
-        """
-        logger.info("Running Great Expectations validation")
-
-        # Create ephemeral data context
-        context = EphemeralDataContext()
-
-        # Create expectation suite
-        suite = ExpectationSuite(expectation_suite_name="delivery_trips_suite")
-
-        # Add expectations
-        expectations = [
-            # Column expectations
-            ExpectationConfiguration(
-                expectation_type="expect_table_columns_to_match_ordered_list",
-                kwargs={"column_list": self.expected_columns},
-            ),
-            # Null checks
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_not_be_null",
-                kwargs={"column": "trip_id"},
-            ),
-            # Uniqueness
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_be_unique",
-                kwargs={"column": "trip_id"},
-            ),
-            # Range checks
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_be_between",
-                kwargs={"column": "distance_km", "min_value": 1, "max_value": 50},
-            ),
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_be_between",
-                kwargs={"column": "departure_hour", "min_value": 0, "max_value": 23},
-            ),
-            # Categorical checks
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_be_in_set",
-                kwargs={
-                    "column": "vehicle_type",
-                    "value_set": ["van", "truck_small", "truck_large"],
-                },
-            ),
-        ]
-
-        for exp in expectations:
-            suite.add_expectation(exp)
-
-        # Add suite to context
-        context.add_expectation_suite(expectation_suite=suite)
-
-        # Create validator
-        batch_request = RuntimeBatchRequest(
-            datasource_name="pandas_datasource",
-            data_connector_name="default_runtime_data_connector",
-            data_asset_name="delivery_trips",
-            runtime_parameters={"batch_data": df},
-            batch_identifiers={"default_identifier_name": "default_identifier"},
-        )
-
-        # Validate
-        try:
-            # Add pandas datasource
-            context.sources.add_pandas(name="pandas_datasource")
-
-            # Get validator
-            validator = context.get_validator(
-                batch_request=batch_request, expectation_suite_name=suite.expectation_suite_name
-            )
-
-            # Run validation
-            results = validator.validate()
-
-            success = results.success
-            logger.info(f"Great Expectations validation: {'PASSED' if success else 'FAILED'}")
-
-            return success
-
-        except Exception as e:
-            logger.error(f"Great Expectations validation error: {e}")
-            return False

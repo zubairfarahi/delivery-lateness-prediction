@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Training service
+  training:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: app
+    container_name: delivery-ml-training
+    volumes:
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./plots:/app/plots
+    environment:
+      - DATA__DATA_PATH=data/delivery_trips.csv
+      - OPTUNA__N_TRIALS=50
+      - LOGGING__LEVEL=INFO
+    command: python train.py
+
+  # Prediction API service
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: api
+    container_name: delivery-ml-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - API__HOST=0.0.0.0
+      - API__PORT=8000
+      - API__MODEL_ALIAS=champion
+      - LOGGING__LEVEL=INFO
+    depends_on:
+      - mlflow
+    command: python -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+
+  # MLflow tracking server
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.2
+    container_name: delivery-ml-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri file:///mlflow/mlruns --default-artifact-root file:///mlflow/mlruns
+
+networks:
+  default:
+    name: delivery-ml-network

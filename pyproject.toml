@@ -1,0 +1,54 @@
+[project]
+name = "delivery-lateness-prediction"
+version = "1.0.0"
+description = "End-to-end ML system for predicting delivery lateness"
+authors = [{name = "Zubair Farahi"}]
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "numpy==1.26.4",
+    "pandas==2.2.0",
+    "scikit-learn==1.4.0",
+    "xgboost==2.0.3",
+    "optuna==3.5.0",
+    "mlflow==2.10.2",
+    "great-expectations==0.18.12",
+    "loguru==0.7.2",
+    "pydantic==2.6.1",
+    "pydantic-settings==2.1.0",
+    "python-dotenv==1.0.1",
+    "fastapi==0.109.2",
+    "uvicorn[standard]==0.27.1",
+    "matplotlib==3.8.2",
+    "seaborn==0.13.2",
+    "joblib==1.3.2",
+    "tqdm==4.66.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==24.1.1",
+    "isort==5.13.2",
+    "flake8==7.0.0",
+    "pytest==8.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"

@@ -169,8 +169,3 @@ make lint      # Flake8
 make test      # Pytest (if tests available)
 ```
 
-Code follows SOLID principles with modular design. Each component has a single responsibility and can be extended independently.
-
----
-
-Built with production-grade ML engineering practices. See `docs/SUMMARY.md` for technical details.

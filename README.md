@@ -40,7 +40,7 @@ This runs the full pipeline:
 - Engineers features (duration ratios, time-based, efficiency metrics)
 - Tunes hyperparameters with Optuna (50 trials)
 - Trains XGBoost with 5-fold CV
-- Evaluates: Accuracy, Precision, Recall, F1, ROC-AUC
+- Evaluates: Accuracy, Precision, Recall, F1
 - Registers model in MLflow (champion if ≥75% accuracy)
 
 Takes ~5-10 minutes. For quick testing: `make train-quick` (10 trials)
@@ -133,7 +133,7 @@ make format         # Format code
 - **Algorithm**: XGBoost with scale_pos_weight for class imbalance
 - **Tuning**: Optuna Bayesian optimization (max_depth, learning_rate, n_estimators, etc.)
 - **Validation**: 5-fold Stratified K-Fold
-- **Metrics**: Accuracy, Precision, Recall, F1, ROC-AUC
+- **Metrics**: Accuracy, Precision, Recall, F1
 - **Promotion**: Auto-promoted to "champion" if accuracy ≥75%, else "candidate"
 
 ## Docker

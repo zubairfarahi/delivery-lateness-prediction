@@ -12,7 +12,8 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-
+from dotenv import load_dotenv
+load_dotenv()
 class BaseDataLoader(ABC):
     """Abstract base class for data loaders (Interface Segregation)"""
 

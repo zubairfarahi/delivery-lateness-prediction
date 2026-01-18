@@ -109,13 +109,14 @@ class ModelTrainer:
             model = xgb.XGBClassifier(**params)
 
             # Cross-validation score
+            # Note: n_jobs=1 avoids macOS Python 3.12 multiprocessing ResourceTracker warnings
             scores = cross_val_score(
                 model,
                 X_train,
                 y_train,
                 cv=cv_splits,
-                scoring=settings.optuna.metric,  # 'roc_auc' by default
-                n_jobs=-1,
+                scoring=settings.optuna.metric,  # 'f1' by default
+                n_jobs=1,
             )
 
             # Return mean score
@@ -219,14 +220,13 @@ class ModelTrainer:
 
             # Predict
             y_pred = model.predict(X_fold_val)
-            y_pred_proba = model.predict_proba(X_fold_val)
 
             # Evaluate
-            metrics = evaluator.evaluate(y_fold_val, y_pred, y_pred_proba)
+            metrics = evaluator.evaluate(y_fold_val, y_pred)
             fold_results.append(metrics)
 
             logger.info(
-                f"Fold {fold_idx} - Accuracy: {metrics['accuracy']:.4f}, ROC-AUC: {metrics['roc_auc']:.4f}"
+                f"Fold {fold_idx} - Accuracy: {metrics['accuracy']:.4f}, F1: {metrics['f1']:.4f}"
             )
 
         # Summarize CV results

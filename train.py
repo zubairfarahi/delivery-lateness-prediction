@@ -112,9 +112,9 @@ def main():
         "departure_hour",
         # Engineered numerical features
         "duration_diff",
-        "duration_ratio",
+        # "duration_ratio",
         "is_ahead_of_schedule",
-        "duration_pct_diff",
+        # "duration_pct_diff",
         "min_per_km",
         "is_rush_hour",
         "is_weekend",
@@ -205,7 +205,7 @@ def main():
     y_test_proba = model.predict_proba(X_test_transformed)
 
     # Evaluate
-    test_metrics = evaluator.evaluate(y_test.values, y_test_pred, y_test_proba)
+    test_metrics = evaluator.evaluate(y_test.values, y_test_pred)
 
     # Classification report
     evaluator.get_classification_report(y_test.values, y_test_pred)
@@ -217,12 +217,6 @@ def main():
     # Plot confusion matrix
     evaluator.plot_confusion_matrix(save_path=plots_dir / "confusion_matrix.png")
 
-    # Plot ROC curve
-    evaluator.plot_roc_curve(
-        y_test.values,
-        y_test_proba[:, 1],
-        save_path=plots_dir / "roc_curve.png",
-    )
 
     # Feature importance
     feature_importance = trainer.get_feature_importance(preprocessor.get_feature_names())
@@ -292,7 +286,6 @@ def main():
     logger.info("TRAINING PIPELINE COMPLETE!")
     logger.info("=" * 80)
     logger.info(f"Test Accuracy: {test_metrics['accuracy']:.4f}")
-    logger.info(f"Test ROC-AUC: {test_metrics['roc_auc']:.4f}")
     logger.info(f"Test F1-Score: {test_metrics['f1']:.4f}")
     logger.info(f"Model Status: {'CHAMPION ✓' if is_champion else 'CANDIDATE'}")
     logger.info(f"MLflow Run ID: {run_id}")

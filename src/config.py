@@ -55,7 +55,7 @@ class OptunaConfig(BaseSettings):
     direction: Literal["maximize", "minimize"] = Field(
         default="maximize", description="Optimization direction"
     )
-    metric: str = Field(default="roc_auc", description="Metric to optimize")
+    metric: str = Field(default="f1", description="Metric to optimize")
 
 
 class EvaluationConfig(BaseSettings):
@@ -67,9 +67,9 @@ class EvaluationConfig(BaseSettings):
         le=1.0,
         description="Minimum accuracy for champion promotion",
     )
-    primary_metric: str = Field(default="roc_auc", description="Primary metric for model selection")
+    primary_metric: str = Field(default="f1", description="Primary metric for model selection")
     metrics: List[str] = Field(
-        default=["accuracy", "precision", "recall", "f1", "roc_auc"],
+        default=["accuracy", "precision", "recall", "f1"],
         description="Metrics to track",
     )
 

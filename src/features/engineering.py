@@ -80,13 +80,13 @@ class FeatureEngineer:
         df["duration_diff"] = df["actual_duration_min"] - df["estimated_duration_min"]
 
         # Ratio (how much longer/shorter than expected)
-        df["duration_ratio"] = df["actual_duration_min"] / df["estimated_duration_min"]
+        # df["duration_ratio"] = df["actual_duration_min"] / df["estimated_duration_min"]
 
         # Boolean: was delivery ahead of schedule?
         df["is_ahead_of_schedule"] = (df["duration_diff"] < 0).astype(int)
 
         # Absolute percentage difference
-        df["duration_pct_diff"] = abs(df["duration_diff"]) / df["estimated_duration_min"]
+        # df["duration_pct_diff"] = abs(df["duration_diff"]) / df["estimated_duration_min"]
 
         # Minutes per km (speed proxy)
         df["min_per_km"] = df["actual_duration_min"] / df["distance_km"]
@@ -94,9 +94,9 @@ class FeatureEngineer:
         self.feature_names.extend(
             [
                 "duration_diff",
-                "duration_ratio",
+                # "duration_ratio",
                 "is_ahead_of_schedule",
-                "duration_pct_diff",
+                # "duration_pct_diff",
                 "min_per_km",
             ]
         )

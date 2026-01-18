@@ -1,6 +1,6 @@
 """
 Model Evaluation Module
-Computes all required metrics: Accuracy, Precision, Recall, F1, ROC-AUC
+Computes all required metrics: Accuracy, Precision, Recall, F1
 """
 
 from typing import Dict, Optional
@@ -43,16 +43,13 @@ class ModelEvaluator:
         self.metrics: Dict[str, float] = {}
         self.confusion_mat: Optional[np.ndarray] = None
 
-    def evaluate(
-        self, y_true: np.ndarray, y_pred: np.ndarray, y_pred_proba: Optional[np.ndarray] = None
-    ) -> Dict[str, float]:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
         """
         Compute all evaluation metrics
 
         Args:
             y_true: True labels
             y_pred: Predicted labels
-            y_pred_proba: Predicted probabilities (for ROC-AUC)
 
         Returns:
             Dictionary of metrics
@@ -72,21 +69,6 @@ class ModelEvaluator:
 
         # F1-Score
         self.metrics["f1"] = f1_score(y_true, y_pred, average=self.average, zero_division=0)
-
-        # ROC-AUC (requires probabilities)
-        if y_pred_proba is not None:
-            try:
-                # For binary classification, use probabilities of positive class
-                if y_pred_proba.ndim == 2 and y_pred_proba.shape[1] == 2:
-                    self.metrics["roc_auc"] = roc_auc_score(y_true, y_pred_proba[:, 1])
-                else:
-                    self.metrics["roc_auc"] = roc_auc_score(y_true, y_pred_proba)
-            except Exception as e:
-                logger.warning(f"Could not compute ROC-AUC: {e}")
-                self.metrics["roc_auc"] = 0.0
-        else:
-            logger.warning("Predicted probabilities not provided, skipping ROC-AUC")
-            self.metrics["roc_auc"] = 0.0
 
         # Confusion matrix
         self.confusion_mat = confusion_matrix(y_true, y_pred)

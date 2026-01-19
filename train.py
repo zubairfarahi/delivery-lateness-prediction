@@ -249,7 +249,6 @@ def main():
     # Prepare artifacts
     artifacts = {
         "confusion_matrix": plots_dir / "confusion_matrix.png",
-        "roc_curve": plots_dir / "roc_curve.png",
         "feature_importance": plots_dir / "feature_importance.png",
     }
 

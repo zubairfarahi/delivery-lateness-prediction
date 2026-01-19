@@ -109,7 +109,6 @@ class ModelTrainer:
             model = xgb.XGBClassifier(**params)
 
             # Cross-validation score
-            # Note: n_jobs=1 avoids macOS Python 3.12 multiprocessing ResourceTracker warnings
             scores = cross_val_score(
                 model,
                 X_train,

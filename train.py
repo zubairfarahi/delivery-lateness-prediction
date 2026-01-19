@@ -202,7 +202,6 @@ def main():
 
     # Predict on test set
     y_test_pred = model.predict(X_test_transformed)
-    y_test_proba = model.predict_proba(X_test_transformed)
 
     # Evaluate
     test_metrics = evaluator.evaluate(y_test.values, y_test_pred)
